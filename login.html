@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SmartStay AI Portal</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#0F172A,#1E293B,#1A237E);
+color:white;
+margin:0;
+}
+
+.container{
+width:400px;
+margin:auto;
+margin-top:80px;
+}
+
+.glass{
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.2);
+}
+
+h2{
+text-align:center;
+color:#00E5FF;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:10px;
+border:none;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#00E5FF;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+.tabs{
+display:flex;
+justify-content:space-around;
+margin-bottom:15px;
+}
+
+.tab{
+cursor:pointer;
+padding:8px;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="glass">
+
+<h2>SmartStay AI</h2>
+
+<div class="tabs">
+
+<div class="tab" onclick="show('studentLogin')">Student Login</div>
+<div class="tab" onclick="show('studentSignup')">Student Sign Up</div>
+
+</div>
+
+<!-- Student Login -->
+
+<div id="studentLogin" class="form-section">
+
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="studentLogin()">Login</button>
+
+</div>
+
+<!-- Student Sign Up -->
+
+<div id="studentSignup" class="form-section hidden">
+
+<input id="name" placeholder="Full Name">
+<input id="workplace" placeholder="Where you Study or Work">
+<input id="email" placeholder="Email">
+<input id="mobile" placeholder="Mobile Number">
+
+<select id="designation">
+<option>Student</option>
+<option>Employee</option>
+</select>
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="studentSignup()">Sign Up</button>
+
+</div>
+
+<hr>
+
+<div class="tabs">
+
+<div class="tab" onclick="show('ownerLogin')">PG Owner Login</div>
+<div class="tab" onclick="show('ownerSignup')">Owner Sign Up</div>
+
+</div>
+
+<!-- Owner Login -->
+
+<div id="ownerLogin" class="form-section hidden">
+
+<input id="ownerLoginEmail" placeholder="Email">
+<input id="ownerLoginPassword" type="password" placeholder="Password">
+
+<button onclick="ownerLogin()">Login</button>
+
+</div>
+
+<!-- Owner Signup -->
+
+<div id="ownerSignup" class="form-section hidden">
+
+<input id="ownerName" placeholder="Owner Name">
+<input id="pgName" placeholder="PG Name">
+<input id="location" placeholder="Location">
+<input id="ownerEmail" placeholder="Email">
+<input id="ownerMobile" placeholder="Mobile Number">
+
+<input id="ownerPassword" type="password" placeholder="Password">
+
+<button onclick="ownerSignup()">Sign Up</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function show(id){
+
+let forms = document.querySelectorAll(".form-section");
+
+forms.forEach(function(form){
+form.classList.add("hidden");
+});
+
+document.getElementById(id).classList.remove("hidden");
+
+}
+
+</script>
+
+
+<!-- Firebase Scripts -->
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBd4gt4NtdIw9sc1vQ0JvONzVN9YdFji3I",
+authDomain: "smartstayai-8546b.firebaseapp.com",
+projectId: "smartstayai-8546b",
+storageBucket: "smartstayai-8546b.firebasestorage.app",
+messagingSenderId: "872249917190",
+appId: "1:872249917190:web:674e312f15005dba9ca887"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+function studentSignup(){
+
+let name=document.getElementById("name").value
+let workplace=document.getElementById("workplace").value
+let email=document.getElementById("email").value
+let mobile=document.getElementById("mobile").value
+let designation=document.getElementById("designation").value
+let password=document.getElementById("password").value
+
+auth.createUserWithEmailAndPassword(email,password)
+
+.then(user=>{
+
+db.collection("students").add({
+name:name,
+workplace:workplace,
+email:email,
+mobile:mobile,
+designation:designation
+})
+
+alert("Student Registered Successfully")
+
+})
+
+.catch(error=>alert(error.message))
+
+}
+
+
+
+function studentLogin(){
+
+let email=document.getElementById("loginEmail").value
+let password=document.getElementById("loginPassword").value
+
+auth.signInWithEmailAndPassword(email,password)
+
+.then(()=>{
+alert("Student Login Successful")
+})
+
+.catch(error=>alert(error.message))
+
+}
+
+
+
+function ownerSignup(){
+
+let name=document.getElementById("ownerName").value
+let pg=document.getElementById("pgName").value
+let location=document.getElementById("location").value
+let email=document.getElementById("ownerEmail").value
+let mobile=document.getElementById("ownerMobile").value
+let password=document.getElementById("ownerPassword").value
+
+auth.createUserWithEmailAndPassword(email,password)
+
+.then(user=>{
+
+db.collection("owners").add({
+owner:name,
+pgName:pg,
+location:location,
+email:email,
+mobile:mobile
+})
+
+alert("Owner Registered Successfully")
+
+})
+
+.catch(error=>alert(error.message))
+
+}
+
+
+
+function ownerLogin(){
+
+let email=document.getElementById("ownerLoginEmail").value
+let password=document.getElementById("ownerLoginPassword").value
+
+auth.signInWithEmailAndPassword(email,password)
+
+.then(()=>{
+alert("Owner Login Successful")
+})
+
+.catch(error=>alert(error.message))
+
+}
+
+</script>
+
+</body>
+</html>
